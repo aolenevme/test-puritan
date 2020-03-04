@@ -2,7 +2,7 @@
  Application state
  **/
 
-import { from } from 'rxjs';
+import { from } from "rxjs";
 
 /**
  Should not be accessed directly by application code.
