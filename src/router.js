@@ -2,47 +2,97 @@
  * Router loop
  **/
 
+import { compareFsmStatesAndTriggers } from './utils';
+
 // TODO: Add laterFns
 
 const defineNewFsmStateAndTrigger = (fsmState, trigger) => {
-  switch ([fsmState, trigger]) {
-    /**
-     * You should read the following "case" as:
-     * [current-FSM-state trigger] -> [new-FSM-state action-fn]
-     * So, for example, the next line should be interpreted as:
-     * if you are in state ":idle" and a trigger ":add-event"
-     * happens, then move the FSM to state ":scheduled" and execute
-     * that two-part "do" function.
-     */
-    case ['idle', 'add-event']:
-      /** TODO: Finish trigger **/ return ['scheduled', () => ({})];
+  const arrayFsmStateTrigger = [fsmState, trigger];
 
-    // State: :scheduled  (the queue is scheduled to run, soon)
-    case ['scheduled', 'add-event']:
-      /** TODO: Finish trigger **/ return ['scheduled', () => ({})];
-    case ['scheduled', 'run-queue']:
-      /** TODO: Finish trigger **/ return ['running', () => ({})];
+  /**
+   * You should read the following "case" as:
+   * [current-FSM-state trigger] -> [new-FSM-state action-fn]
+   * So, for example, the next line should be interpreted as:
+   * if you are in state ":idle" and a trigger ":add-event"
+   * happens, then move the FSM to state ":scheduled" and execute
+   * that two-part "do" function.
+   */
+  if (
+    compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
+      'idle',
+      'add-event'
+    ])
+  ) {
+    /** TODO: Finish trigger **/ return ['scheduled', () => ({})];
+  }
 
-    // State: :running (the queue is being processed one event after another)
-    case ['running', 'add-event']:
-      /** TODO: Finish trigger **/ return ['running', () => ({})];
-    case ['running', 'pause']:
-      /** TODO: Finish trigger **/ return ['paused', () => ({})];
-    case ['running', 'exception']:
-      /** TODO: Finish trigger **/ return ['idle', () => ({})];
-    case ['running', 'finish-run']:
-      /** TODO: Finish trigger **/ return [];
+  // State: :scheduled  (the queue is scheduled to run, soon)
+  else if (
+    compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
+      'scheduled',
+      'add-event'
+    ])
+  ) {
+    /** TODO: Finish trigger **/ return ['scheduled', () => ({})];
+  } else if (
+    compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
+      'scheduled',
+      'run-queue'
+    ])
+  ) {
+    /** TODO: Finish trigger **/ return ['running', () => ({})];
+  }
 
-    //    State: :paused (:flush-dom metadata on an event has caused a temporary pause in processing)
-    case ['paused', 'add-event']:
-      /** TODO: Finish trigger **/ return ['paused', () => ({})];
-    case ['paused', 'resume']:
-      /** TODO: Finish trigger **/ return ['running', () => ({})];
+  // State: :running (the queue is being processed one event after another)
+  else if (
+    compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
+      'running',
+      'add-event'
+    ])
+  ) {
+    /** TODO: Finish trigger **/ return ['running', () => ({})];
+  } else if (
+    compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
+      'running',
+      'pause'
+    ])
+  ) {
+    /** TODO: Finish trigger **/ return ['paused', () => ({})];
+  } else if (
+    compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
+      'running',
+      'exception'
+    ])
+  ) {
+    /** TODO: Finish trigger **/ return ['idle', () => ({})];
+  } else if (
+    compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
+      'running',
+      'finish-run'
+    ])
+  ) {
+    /** TODO: Finish trigger **/ return [];
+  }
 
-    default:
-      /** TODO: Throw an exception here**/ console.error(
-        'Puritan: Router state transition not found'
-      );
+  //    State: :paused (:flush-dom metadata on an event has caused a temporary pause in processing)
+  else if (
+    compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
+      'paused',
+      'add-event'
+    ])
+  ) {
+    /** TODO: Finish trigger **/ return ['paused', () => ({})];
+  } else if (
+    compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
+      'paused',
+      'resume'
+    ])
+  ) {
+    /** TODO: Finish trigger **/ return ['running', () => ({})];
+  } else {
+    /** TODO: Throw an exception here**/
+
+    console.error('Puritan: Router state transition not found');
   }
 };
 
