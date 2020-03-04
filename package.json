@@ -1,0 +1,9 @@
+{
+  "name": "test-puritan",
+  "version": "0.0.1",
+  "description": "The React framework for puritans",
+  "main": "index.js",
+  "repository": "git@github.com:eshekak/test-puritan.git",
+  "author": "hello@aolenev.me",
+  "license": "MIT"
+}
