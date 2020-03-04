@@ -5,7 +5,6 @@
 import { compareFsmStatesAndTriggers } from './utils';
 
 // TODO: Add laterFns
-
 const defineNewFsmStateAndTrigger = (fsmState, trigger) => {
   const arrayFsmStateTrigger = [fsmState, trigger];
 
@@ -100,6 +99,26 @@ const defineNewFsmStateAndTrigger = (fsmState, trigger) => {
 const EventQueue = (fsmState, queue, postEventCallbackFns) => {
   // FSM Implementation
 
+  const addEvent = (_, nextEvent) => ({});
+
+  const processFirstEventInQueue = self => ({});
+
+  const runNextTick = self => ({});
+
+  /**
+   * Process all the events currently in the queue, but not any new ones.
+   * Be aware that events might have metadata which will pause processing.
+   */
+  const runQueue = self => ({});
+
+  const exception = (self, ex) => ({});
+
+  const pause = (self, laterFn) => ({});
+
+  const callPostEventCallbacks = (_, eventV) => ({});
+
+  const resume = self => ({});
+
   /**
      The following "case" implements the Finite State Machine.
      Given a "trigger", and the existing FSM state, it computes the new FSM state and the transition action (function).
@@ -114,5 +133,17 @@ const EventQueue = (fsmState, queue, postEventCallbackFns) => {
       fsmState,
       trigger
     );
+  };
+
+  return {
+    // Called by dispatch
+    push: (self, nextEvent) => ({}),
+
+    // Register a callback function which will be called after each event is processed
+    addPostEventCallback: (_, id, callbackFn) => ({}),
+
+    removePostEventCallback: (_, id) => ({}),
+
+    purge: () => ({})
   };
 };
