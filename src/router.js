@@ -41,7 +41,7 @@ const defineNewFsmStateAndTrigger = (fsmState, trigger) => {
 
     default:
       /** TODO: Throw an exception here**/ console.error(
-        'Puritan: Router state transition not found',
+        'Puritan: Router state transition not found'
       );
   }
 };
@@ -62,7 +62,7 @@ const EventQueue = (fsmState, queue, postEventCallbackFns) => {
     // Get new FSM state and an action function
     const [newFsmState, actionFn] = defineNewFsmStateAndTrigger(
       fsmState,
-      trigger,
+      trigger
     );
   };
 };
