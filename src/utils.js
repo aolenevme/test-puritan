@@ -15,3 +15,10 @@ export const compareFsmStatesAndTriggers = (
   [secondFsmState, secondTrigger]
 ) =>
   firstFsmState === secondFsmState && firstTrigger === secondTrigger;
+
+/**
+ * Next tick implementation for the FE
+ * @param {Function} callback
+ * @returns {number}
+ */
+export const nextTick = callback => setTimeout(callback, 0);

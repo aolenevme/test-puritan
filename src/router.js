@@ -2,7 +2,7 @@
  * Router loop
  **/
 
-import { compareFsmStatesAndTriggers } from './utils';
+import { compareFsmStatesAndTriggers, nextTick } from './utils';
 import { queue } from 'rxjs/internal/scheduler/queue';
 
 // TODO: Add laterFns
@@ -117,7 +117,6 @@ const defineNewFsmStateAndTrigger = (
 // Create implementation of the EventQueue
 // Final State Machine implementation
 const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
-
   // Add new event
   const addEvent = nextEvent => {
     queue.push(nextEvent);
@@ -125,7 +124,11 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
 
   const processFirstEventInQueue = self => ({});
 
-  const runNextTick = self => ({});
+  // Run next Tick
+  const runNextTick = self =>
+    nextTick(() =>
+      fsmTrigger({ self, arg: null, trigger: 'run-queue' })
+    );
 
   /**
    * Process all the events currently in the queue, but not any new ones.
