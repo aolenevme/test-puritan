@@ -9,7 +9,7 @@ import { queue } from 'rxjs/internal/scheduler/queue';
 
 const defineNewFsmStateAndTrigger = (
   { arg, fsmState, self, trigger },
-  { addEvent, exception, pause, resume, runNextTick, runQueue }
+  { addEvent, exception, pause, purge, resume, runNextTick, runQueue }
 ) => {
   const arrayFsmStateTrigger = [fsmState, trigger];
 
@@ -117,6 +117,11 @@ const defineNewFsmStateAndTrigger = (
 // Create implementation of the EventQueue
 // Final State Machine implementation
 const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
+  // Clean up the queue
+  function purge() {
+    queue = [];
+  }
+
   // Add new event
   const addEvent = nextEvent => {
     queue.push(nextEvent);
@@ -162,7 +167,12 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
     }
   };
 
-  const exception = ex => ({});
+  const exception = ex => {
+    // Clean up the queue
+    purge();
+
+    throw ex;
+  };
 
   const pause = laterFn => ({});
 
@@ -196,6 +206,6 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
 
     removePostEventCallback: (_, id) => ({}),
 
-    purge: () => ({})
+    purge
   };
 };
