@@ -136,18 +136,28 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
    */
   const runQueue = () => {
     // Get the length of queue
-    const queueLength = queue.length;
+    let queueLength = queue.length;
 
     // Finish the execution of events
     if (queueLength === 0) {
       fsmTrigger({ self, arg: null, trigger: 'finish-run' });
     }
 
-    // TODO: Rewrite into JS: if-let [later-fn (some later-fns (-> queue peek meta keys))]
-    const laterFn = () => ({});
+    while (queueLength > 0) {
+      // TODO: Rewrite into JS: if-let [later-fn (some later-fns (-> queue peek meta keys))]
+      const laterFn = () => ({});
 
-    if (laterFn) {
-      fsmTrigger({ self, arg: laterFn, trigger: 'pause' });
+      if (laterFn) {
+        fsmTrigger({
+          self,
+          arg: laterFn,
+          trigger: 'pause'
+        });
+      } else {
+        processFirstEventInQueue(self);
+
+        --queueLength;
+      }
     }
   };
 
