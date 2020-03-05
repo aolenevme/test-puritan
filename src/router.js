@@ -6,8 +6,8 @@ import { compareFsmStatesAndTriggers } from './utils';
 
 // TODO: Add laterFns
 const defineNewFsmStateAndTrigger = (
-  { nextEvent, fsmState, self, trigger },
-  { addEvent, runNextTick, runQueue }
+  { arg, fsmState, self, trigger },
+  { addEvent, exception, pause, resume, runNextTick, runQueue }
 ) => {
   const arrayFsmStateTrigger = [fsmState, trigger];
 
@@ -28,7 +28,7 @@ const defineNewFsmStateAndTrigger = (
     return [
       'scheduled',
       () => {
-        addEvent(nextEvent);
+        addEvent(arg);
 
         return runNextTick(self);
       }
@@ -42,7 +42,7 @@ const defineNewFsmStateAndTrigger = (
       'add-event'
     ])
   ) {
-    return ['scheduled', () => addEvent(nextEvent)];
+    return ['scheduled', () => addEvent(arg)];
   } else if (
     compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
       'scheduled',
@@ -59,21 +59,21 @@ const defineNewFsmStateAndTrigger = (
       'add-event'
     ])
   ) {
-    /** TODO: Finish trigger **/ return ['running', () => ({})];
+    return ['running', () => addEvent(arg)];
   } else if (
     compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
       'running',
       'pause'
     ])
   ) {
-    /** TODO: Finish trigger **/ return ['paused', () => ({})];
+    return ['paused', () => pause(arg)];
   } else if (
     compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
       'running',
       'exception'
     ])
   ) {
-    /** TODO: Finish trigger **/ return ['idle', () => ({})];
+    return ['idle', () => exception(arg)];
   } else if (
     compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
       'running',
@@ -90,14 +90,14 @@ const defineNewFsmStateAndTrigger = (
       'add-event'
     ])
   ) {
-    /** TODO: Finish trigger **/ return ['paused', () => ({})];
+    return ['paused', () => addEvent(arg)];
   } else if (
     compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
       'paused',
       'resume'
     ])
   ) {
-    /** TODO: Finish trigger **/ return ['running', () => ({})];
+    return ['running', () => resume()];
   } else {
     /** TODO: Throw an exception here**/
 
@@ -121,34 +121,34 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
    */
   const runQueue = self => ({});
 
-  const exception = (self, ex) => ({});
+  const exception = ex => ({});
 
-  const pause = (self, laterFn) => ({});
+  const pause = laterFn => ({});
 
   const callPostEventCallbacks = (_, eventV) => ({});
 
-  const resume = self => ({});
+  const resume = () => ({});
 
   /**
      The following "case" implements the Finite State Machine.
      Given a "trigger", and the existing FSM state, it computes the new FSM state and the transition action (function).
      */
-  const fsmTrigger = ({ self, nextEvent, trigger }) => {
+  const fsmTrigger = ({ self, arg, trigger }) => {
     // TODO: purpose of locking? Block a Java object from mutations? Used for the concurrent programming?
 
     // TODO: purpose of with-trace?
 
     // Get new FSM state and an action function
     const [newFsmState, actionFn] = defineNewFsmStateAndTrigger(
-      { self, fsmState, nextEvent, trigger },
-      { addEvent, runNextTick, runQueue }
+      { self, fsmState, arg, trigger },
+      { addEvent, exception, pause, resume, runNextTick, runQueue }
     );
   };
 
   return {
     // Called by dispatch
-    push: (self, nextEvent) =>
-      fsmTrigger({ self, nextEvent, trigger: 'add-event' }),
+    push: (self, arg) =>
+      fsmTrigger({ self, arg, trigger: 'add-event' }),
 
     // Register a callback function which will be called after each event is processed
     addPostEventCallback: (_, id, callbackFn) => ({}),
