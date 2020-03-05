@@ -174,7 +174,10 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
     throw ex;
   };
 
-  const pause = laterFn => ({});
+  const pause = laterFn =>
+    laterFn(() =>
+      fsmTrigger({ self, arg: null, trigger: 'resume' })
+    );
 
   const callPostEventCallbacks = (_, eventV) => ({});
 
