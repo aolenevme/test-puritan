@@ -3,8 +3,10 @@
  **/
 
 import { compareFsmStatesAndTriggers } from './utils';
+import { queue } from 'rxjs/internal/scheduler/queue';
 
 // TODO: Add laterFns
+
 const defineNewFsmStateAndTrigger = (
   { arg, fsmState, self, trigger },
   { addEvent, exception, pause, resume, runNextTick, runQueue }
@@ -80,7 +82,10 @@ const defineNewFsmStateAndTrigger = (
       'finish-run'
     ])
   ) {
-    /** TODO: Finish trigger **/ return [];
+      // If queue is not an empty array, run next tick or set fsm into the idle state
+    return Array.isArray(queue) && queue.length > 0
+      ? ['scheduled', () => runNextTick()]
+      : ['idle'];
   }
 
   //    State: :paused (:flush-dom metadata on an event has caused a temporary pause in processing)
