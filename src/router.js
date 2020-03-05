@@ -175,11 +175,11 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
   };
 
   const pause = laterFn =>
-    laterFn(() =>
-      fsmTrigger({ self, arg: null, trigger: 'resume' })
-    );
+    laterFn(() => fsmTrigger({ self, arg: null, trigger: 'resume' }));
 
-  const callPostEventCallbacks = (_, eventV) => ({});
+  const callPostEventCallbacks = (_, eventV) => {
+    postEventCallbackFns.forEach(callback => callback(eventV, queue));
+  };
 
   const resume = () => ({});
 
