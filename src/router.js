@@ -82,7 +82,7 @@ const defineNewFsmStateAndTrigger = (
       'finish-run'
     ])
   ) {
-      // If queue is not an empty array, run next tick or set fsm into the idle state
+    // If queue is not an empty array, run next tick or set fsm into the idle state
     return Array.isArray(queue) && queue.length > 0
       ? ['scheduled', () => runNextTick()]
       : ['idle'];
@@ -103,10 +103,14 @@ const defineNewFsmStateAndTrigger = (
     ])
   ) {
     return ['running', () => resume()];
-  } else {
-    /** TODO: Throw an exception here**/
-
-    console.error('Puritan: Router state transition not found');
+  }
+  // Throw exception if nothing has matched
+  else {
+    throw {
+      message: 'Re-frame: router state transition not found.',
+      fsmState,
+      trigger
+    };
   }
 };
 
