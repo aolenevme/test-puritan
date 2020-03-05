@@ -178,10 +178,15 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
     laterFn(() => fsmTrigger({ self, arg: null, trigger: 'resume' }));
 
   const callPostEventCallbacks = (_, eventV) => {
+    // TODO: Is it Object or Array?
     postEventCallbackFns.forEach(callback => callback(eventV, queue));
   };
 
-  const resume = () => ({});
+  const resume = () => {
+    processFirstEventInQueue(self);
+
+    runQueue();
+  };
 
   /**
      The following "case" implements the Finite State Machine.
@@ -205,7 +210,11 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
       fsmTrigger({ self, arg, trigger: 'add-event' }),
 
     // Register a callback function which will be called after each event is processed
-    addPostEventCallback: (_, id, callbackFn) => ({}),
+    addPostEventCallback: ({ id, callbackFn }) => {
+      if (true /* (contains? post-event-callback-fns id) */) {
+
+      }
+    },
 
     removePostEventCallback: (_, id) => ({}),
 
