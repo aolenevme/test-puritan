@@ -115,10 +115,13 @@ const defineNewFsmStateAndTrigger = (
 };
 
 // Create implementation of the EventQueue
+// Final State Machine implementation
 const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
-  // FSM Implementation
 
-  const addEvent = nextEvent => ({});
+  // Add new event
+  const addEvent = nextEvent => {
+    queue.push(nextEvent);
+  };
 
   const processFirstEventInQueue = self => ({});
 
