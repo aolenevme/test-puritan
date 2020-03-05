@@ -134,7 +134,22 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
    * Process all the events currently in the queue, but not any new ones.
    * Be aware that events might have metadata which will pause processing.
    */
-  const runQueue = self => ({});
+  const runQueue = () => {
+    // Get the length of queue
+    const queueLength = queue.length;
+
+    // Finish the execution of events
+    if (queueLength === 0) {
+      fsmTrigger({ self, arg: null, trigger: 'finish-run' });
+    }
+
+    // TODO: Rewrite into JS: if-let [later-fn (some later-fns (-> queue peek meta keys))]
+    const laterFn = () => ({});
+
+    if (laterFn) {
+      fsmTrigger({ self, arg: laterFn, trigger: 'pause' });
+    }
+  };
 
   const exception = ex => ({});
 
