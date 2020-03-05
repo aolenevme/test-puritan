@@ -7,7 +7,7 @@ import { compareFsmStatesAndTriggers } from './utils';
 // TODO: Add laterFns
 const defineNewFsmStateAndTrigger = (
   { nextEvent, fsmState, self, trigger },
-  { addEvent, runNextTick }
+  { addEvent, runNextTick, runQueue }
 ) => {
   const arrayFsmStateTrigger = [fsmState, trigger];
 
@@ -42,14 +42,14 @@ const defineNewFsmStateAndTrigger = (
       'add-event'
     ])
   ) {
-    /** TODO: Finish trigger **/ return ['scheduled', () => ({})];
+    return ['scheduled', () => addEvent(nextEvent)];
   } else if (
     compareFsmStatesAndTriggers(arrayFsmStateTrigger, [
       'scheduled',
       'run-queue'
     ])
   ) {
-    /** TODO: Finish trigger **/ return ['running', () => ({})];
+    return ['running', () => runQueue(self)];
   }
 
   // State: :running (the queue is being processed one event after another)
@@ -109,7 +109,7 @@ const defineNewFsmStateAndTrigger = (
 const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
   // FSM Implementation
 
-  const addEvent = (nextEvent) => ({});
+  const addEvent = nextEvent => ({});
 
   const processFirstEventInQueue = self => ({});
 
@@ -141,7 +141,7 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
     // Get new FSM state and an action function
     const [newFsmState, actionFn] = defineNewFsmStateAndTrigger(
       { self, fsmState, nextEvent, trigger },
-      { addEvent, runNextTick }
+      { addEvent, runNextTick, runQueue }
     );
   };
 
