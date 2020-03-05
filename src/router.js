@@ -5,7 +5,10 @@
 import { compareFsmStatesAndTriggers } from './utils';
 
 // TODO: Add laterFns
-const defineNewFsmStateAndTrigger = (fsmState, trigger) => {
+const defineNewFsmStateAndTrigger = (
+  { nextEvent, fsmState, self, trigger },
+  { addEvent, runNextTick }
+) => {
   const arrayFsmStateTrigger = [fsmState, trigger];
 
   /**
@@ -22,7 +25,14 @@ const defineNewFsmStateAndTrigger = (fsmState, trigger) => {
       'add-event'
     ])
   ) {
-    /** TODO: Finish trigger **/ return ['scheduled', () => ({})];
+    return [
+      'scheduled',
+      () => {
+        addEvent(nextEvent);
+
+        return runNextTick(self);
+      }
+    ];
   }
 
   // State: :scheduled  (the queue is scheduled to run, soon)
@@ -96,10 +106,10 @@ const defineNewFsmStateAndTrigger = (fsmState, trigger) => {
 };
 
 // Create implementation of the EventQueue
-const EventQueue = (fsmState, queue, postEventCallbackFns) => {
+const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
   // FSM Implementation
 
-  const addEvent = (_, nextEvent) => ({});
+  const addEvent = (nextEvent) => ({});
 
   const processFirstEventInQueue = self => ({});
 
@@ -123,21 +133,22 @@ const EventQueue = (fsmState, queue, postEventCallbackFns) => {
      The following "case" implements the Finite State Machine.
      Given a "trigger", and the existing FSM state, it computes the new FSM state and the transition action (function).
      */
-  const fsmTrigger = (self, trigger, arg) => {
+  const fsmTrigger = ({ self, nextEvent, trigger }) => {
     // TODO: purpose of locking? Block a Java object from mutations? Used for the concurrent programming?
 
     // TODO: purpose of with-trace?
 
     // Get new FSM state and an action function
     const [newFsmState, actionFn] = defineNewFsmStateAndTrigger(
-      fsmState,
-      trigger
+      { self, fsmState, nextEvent, trigger },
+      { addEvent, runNextTick }
     );
   };
 
   return {
     // Called by dispatch
-    push: (self, nextEvent) => ({}),
+    push: (self, nextEvent) =>
+      fsmTrigger({ self, nextEvent, trigger: 'add-event' }),
 
     // Register a callback function which will be called after each event is processed
     addPostEventCallback: (_, id, callbackFn) => ({}),
