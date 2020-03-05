@@ -156,6 +156,7 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
       } else {
         processFirstEventInQueue(self);
 
+        // Decrement the length of the queue locally
         --queueLength;
       }
     }
