@@ -31,13 +31,25 @@ const kind2Id2Handler = new Proxy(
   }
 );
 // TODO: You definitely have to elaborate how to get value from getHandler when observable is triggered
-export const getHandler = async (kind, id, isRequired) => {
+export const getHandler = (kind, id, isRequired) => {
   // If only kind is passed into
   if (kind && !id && !isRequired) {
-    return await kind2Id2Handler.toPromise();
+    return kind2Id2Handler.toPromise();
   }
 
   if (kind && id && !isRequired) {
-    return await kind2Id2Handler.toPromise();
+    return kind2Id2Handler[kind][id];
+  }
+
+  if (kind && id && isRequired) {
+    const handler = getHandler(kind, id);
+
+    if (isRequired && !handler) {
+      console.error(
+        `Re-frame: No ${kind} handler registered for: ${id}`
+      );
+    }
+
+    return handler;
   }
 };
