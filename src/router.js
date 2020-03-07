@@ -5,7 +5,15 @@
 import { compareFsmStatesAndTriggers, nextTick } from './utils';
 import { queue } from 'rxjs/internal/scheduler/queue';
 
-// TODO: Add laterFns
+/**
+ * Events can have metadata which says to pause event processing.
+ * event metadata -> "run later" functions
+ * @type {{yield: *, flushDom: (function(*=): *)}}
+ */
+const laterFns = {
+  flushDom: f => nextTick(() => nextTick(f)),
+  yield: nextTick
+};
 
 const defineNewFsmStateAndTrigger = (
   { arg, fsmState, self, trigger },
@@ -178,8 +186,9 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
     laterFn(() => fsmTrigger({ self, arg: null, trigger: 'resume' }));
 
   const callPostEventCallbacks = (_, eventV) => {
-    // TODO: Is it Object or Array?
-    postEventCallbackFns.forEach(callback => callback(eventV, queue));
+    Object.values(postEventCallbackFns).forEach(callback =>
+      callback(eventV, queue)
+    );
   };
 
   const resume = () => {
@@ -189,19 +198,19 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
   };
 
   /**
-     The following "case" implements the Finite State Machine.
-     Given a "trigger", and the existing FSM state, it computes the new FSM state and the transition action (function).
-     */
+   * The following "case" implements the Finite State Machine.
+   * Given a "trigger", and the existing FSM state, it computes the new FSM state and the transition action (function).
+   **/
   const fsmTrigger = ({ self, arg, trigger }) => {
-    // TODO: purpose of locking? Block a Java object from mutations? Used for the concurrent programming?
-
-    // TODO: purpose of with-trace?
-
     // Get new FSM state and an action function
     const [newFsmState, actionFn] = defineNewFsmStateAndTrigger(
       { self, fsmState, arg, trigger },
       { addEvent, exception, pause, resume, runNextTick, runQueue }
     );
+
+    // The "case" above computed both the new FSM state, and the action. Now, make it happen.
+    fsmState = newFsmState;
+    actionFn && actionFn();
   };
 
   return {
