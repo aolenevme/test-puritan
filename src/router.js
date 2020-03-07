@@ -9,7 +9,7 @@ import { queue } from 'rxjs/internal/scheduler/queue';
 
 const defineNewFsmStateAndTrigger = (
   { arg, fsmState, self, trigger },
-  { addEvent, exception, pause, purge, resume, runNextTick, runQueue }
+  { addEvent, exception, pause, resume, runNextTick, runQueue }
 ) => {
   const arrayFsmStateTrigger = [fsmState, trigger];
 
@@ -211,12 +211,38 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
 
     // Register a callback function which will be called after each event is processed
     addPostEventCallback: ({ id, callbackFn }) => {
-      if (true /* (contains? post-event-callback-fns id) */) {
+      const isEventContained =
+        typeof postEventCallbackFns === 'object' &&
+        Object.keys(postEventCallbackFns).includes(id);
 
+      if (isEventContained) {
+        console.warn(
+          `Re-frame: overwriting existing post event call back with id: ${id}`
+        );
+      } else {
+        postEventCallbackFns = {
+          ...postEventCallbackFns,
+          ...{ [id]: callbackFn }
+        };
       }
     },
 
-    removePostEventCallback: (_, id) => ({}),
+    removePostEventCallback: (_, id) => {
+      const isEventContained =
+        typeof postEventCallbackFns === 'object' &&
+        Object.keys(postEventCallbackFns).includes(id);
+
+      if (!isEventContained) {
+        console.warn(
+          `re-frame: could not remove post event call back with id: ${id}`
+        );
+      } else {
+        postEventCallbackFns = {
+          ...postEventCallbackFns,
+          ...{ [id]: undefined }
+        };
+      }
+    },
 
     purge
   };
