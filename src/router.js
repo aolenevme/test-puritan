@@ -256,3 +256,14 @@ const EventQueue = ({ fsmState, postEventCallbackFns, queue }) => {
     purge
   };
 };
+
+/**
+ * Event Queue
+ * When "dispatch" is called, the event is added into this event queue.  Later,
+ * the queue will "run" and the event will be "handled" by the registered function.
+ */
+const eventQueue = EventQueue({
+  fsmState: 'idle',
+  queue: [],
+  postEventCallbackFns: {}
+});
