@@ -1,12 +1,11 @@
 /**
- Application state
+ * Application state
  **/
-
-import { from } from 'rxjs';
 
 /**
- Should not be accessed directly by application code.
- Read access goes through subscriptions.
- Updates via event handlers.
+ * Should not be accessed directly by application code.
+ * Read access goes through subscriptions.
+ * Updates via event handlers.
  **/
-export default () => from({});
+// TODO: Elaborate on a correct observable
+export default () => new Proxy({}, {});
