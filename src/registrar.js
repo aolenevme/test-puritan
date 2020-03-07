@@ -44,6 +44,8 @@ export const getHandler = (kind, id, isRequired) => {
   if (kind && id && isRequired) {
     const handler = getHandler(kind, id);
 
+    // TODO: There is some logic related to debugging. Elaborate on it.
+
     if (isRequired && !handler) {
       console.error(
         `Re-frame: No ${kind} handler registered for: ${id}`
@@ -52,4 +54,12 @@ export const getHandler = (kind, id, isRequired) => {
 
     return handler;
   }
+};
+
+export const registerHandler = (kind, id, handlerFn) => {
+  // TODO: There is some logic related to debugging. Elaborate on it.
+
+  kind2Id2Handler[kind][id] = handlerFn;
+
+  return handlerFn;
 };
